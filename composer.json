@@ -1,0 +1,28 @@
+{
+    "name": "globbook/globbook-auth-api",
+    "description": "PHP SDK for Globbook API",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Globbook Social Media Network",
+            "email": "team@globbook.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "YourNamespace\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/globbook/globbook-php-api"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.4"
+    },
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

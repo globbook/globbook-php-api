@@ -72,6 +72,7 @@ class GlobbookAuthAPI {
             
             if (!empty($userInfo['user_info'])) {
                 return (object) [
+                    'user_id' => $userInfo['user_info']['user_id'] ?? '',
                     'username' => $userInfo['user_info']['user_name'] ?? '',
                     'email' => $userInfo['user_info']['user_email'] ?? '',
                     'firstname' => $userInfo['user_info']['user_firstname'] ?? '',

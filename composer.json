@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "YourNamespace\\": "src/"
+            "globbook\\": "src/"
         }
     },
     "repositories": [

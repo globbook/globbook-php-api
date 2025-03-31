@@ -37,7 +37,7 @@ class GlobbookAuthAPI {
 
         $data = json_decode($response, true);
         if (isset($data['error'])) {
-            throw new Exception('API error: ' . $data['error']);
+            throw new Exception('API error: ' . $data['message']);
         }
         
         return $data;

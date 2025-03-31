@@ -7,15 +7,15 @@ class GlobbookAuthAPI {
     public string $version = "1.0";
 
     public function __construct($app_id = null, $app_secret = null) {
-        $this->app_id = $app_id ?: getenv('GB_APP_ID');
-        $this->app_secret = $app_secret ?: getenv('GB_APP_SECRET');
+        $this->app_id = $app_id ?: getenv('APP_ID');
+        $this->app_secret = $app_secret ?: getenv('APP_SECRET');
     }
-
-    private function request($endpoint, $params = [], $method = 'GET') {
+    
+    private function request($endpoint, $params = [], $method = 'POST') {
         $url = $this->base_url . $endpoint;
         $options = [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 30,
+            CURLOPT_TIMEOUT => 100,
         ];
 
         if ($method == 'POST') {
@@ -39,58 +39,51 @@ class GlobbookAuthAPI {
         if (isset($data['error'])) {
             throw new Exception('API error: ' . $data['error']);
         }
-
+        
         return $data;
     }
 
     public function authenticate($auth_key) {
-        try {
-            $response = $this->request("/authorize", [
-                "app_id" => $this->app_id,
-                "app_secret" => $this->app_secret,
-                "auth_key" => $auth_key
-            ], 'POST');
-            
-            if (!empty($response['access_token'])) {
-                $this->access_token = $response['access_token'];
-                return $this->access_token;
-            }
-            
-            return null;
-        } catch (Exception $e) {
-            return null;
+        $response = $this->request("/authorize", [
+            "app_id" => $this->app_id,
+            "app_secret" => $this->app_secret,
+            "auth_key" => $auth_key
+        ]);
+        
+        if (!empty($response['access_token'])) {
+            $this->access_token = $response['access_token'];
+            return $this->access_token;
         }
+        
+        return null;
     }
 
     public function getUserInfo() {
         if (!$this->access_token) {
             throw new Exception("Access token is not set. Authenticate first.");
         }
-
-        try {
-            $userInfo = $this->request("/get_user_info", ["access_token" => $this->access_token]);
-            
-            if (!empty($userInfo['user_info'])) {
-                return (object) [
-                    'user_id' => $userInfo['user_info']['user_id'] ?? '',
-                    'username' => $userInfo['user_info']['user_name'] ?? '',
-                    'email' => $userInfo['user_info']['user_email'] ?? '',
-                    'firstname' => $userInfo['user_info']['user_firstname'] ?? '',
-                    'lastname' => $userInfo['user_info']['user_lastname'] ?? '',
-                    'gender' => $userInfo['user_info']['user_gender'] ?? '',
-                    'birthdate' => $userInfo['user_info']['user_birthdate'] ?? '',
-                    'picture' => $userInfo['user_info']['user_picture'] ?? '',
-                    'cover' => $userInfo['user_info']['user_cover'] ?? '',
-                    'verified' => $userInfo['user_info']['user_verified'] ?? '',
-                    'relationship' => $userInfo['user_info']['user_relationship'] ?? '',
-                    'biography' => $userInfo['user_info']['user_biography'] ?? '',
-                    'website' => $userInfo['user_info']['user_website'] ?? '',
-                ];
-            }
-            
-            return null;
-        } catch (Exception $e) {
-            return null;
+        
+        $userInfo = $this->request("/get_user_info", ["access_token" => $this->access_token]);
+        
+        if (!empty($userInfo['user_info'])) {
+            return (object) [
+                'user_id' => $userInfo['user_info']['user_id'] ?? '',
+                'username' => $userInfo['user_info']['user_name'] ?? '',
+                'email' => $userInfo['user_info']['user_email'] ?? '',
+                'firstname' => $userInfo['user_info']['user_firstname'] ?? '',
+                'lastname' => $userInfo['user_info']['user_lastname'] ?? '',
+                'gender' => $userInfo['user_info']['user_gender'] ?? '',
+                'birthdate' => $userInfo['user_info']['user_birthdate'] ?? '',
+                'picture' => $userInfo['user_info']['user_picture'] ?? '',
+                'cover' => $userInfo['user_info']['user_cover'] ?? '',
+                'verified' => $userInfo['user_info']['user_verified'] ?? '',
+                'relationship' => $userInfo['user_info']['user_relationship'] ?? '',
+                'biography' => $userInfo['user_info']['user_biography'] ?? '',
+                'website' => $userInfo['user_info']['user_website'] ?? '',
+            ];
         }
+        
+        return null;
     }
 }
+?>
